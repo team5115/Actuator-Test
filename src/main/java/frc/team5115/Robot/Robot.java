@@ -62,7 +62,9 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (joy.getRawButton(XboxController.Button.kX.value)) {
-            actuator.setSpeed(joy.getRawAxis(XboxController.Axis.kLeftY.value));
+            // actuator.setSpeed(joy.getRawAxis(XboxController.Axis.kLeftY.value));
+            double input = (joy.getRawAxis(XboxController.Axis.kLeftY.value) + 1) / 2.0;
+            actuator.setPosition(input);
         }
     }
 }
