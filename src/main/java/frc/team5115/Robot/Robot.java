@@ -26,11 +26,11 @@ public class Robot extends TimedRobot {
     }
 
     private void pressedA() {
-        actuator.setPosition(0.75);
+        actuator.setPosition(0.950);
     }
 
     private void pressedB(){
-        actuator.setPosition(0.1);
+        actuator.setPosition(0.132);
     }
 
     @Override
@@ -66,5 +66,6 @@ public class Robot extends TimedRobot {
             double input = (joy.getRawAxis(XboxController.Axis.kLeftY.value) + 1) / 2.0;
             actuator.setPosition(input);
         }
+        System.out.println(actuator.getPosition());
     }
 }
