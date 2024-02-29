@@ -19,39 +19,23 @@ public class Robot extends TimedRobot {
         actuator.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
 
         new JoystickButton(joy, XboxController.Button.kA.value)
-        .onTrue(new InstantCommand(this :: pressedA));
+        .onTrue(new InstantCommand(this :: deploy));
 
         new JoystickButton(joy, XboxController.Button.kB.value)
-        .onTrue(new InstantCommand(this :: pressedB));
+        .onTrue(new InstantCommand(this :: stow));
     }
 
-    private void pressedA() {
-        actuator.setPosition(0.950);
+    private void stow() {
+        actuator.setPosition(0.661);
     }
 
-    private void pressedB(){
-        actuator.setPosition(0.132);
+    private void deploy(){
+        actuator.setPosition(0.100);
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-    }
- 
-    @Override
-    public void disabledInit() {
-    }
-
-    @Override
-    public void disabledPeriodic() {
-    }
-
-    @Override
-    public void testInit () {
-    }
-
-    @Override
-    public void testPeriodic () {
     }
 
     @Override
@@ -62,7 +46,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         if (joy.getRawButton(XboxController.Button.kX.value)) {
-            // actuator.setSpeed(joy.getRawAxis(XboxController.Axis.kLeftY.value));
             double input = (joy.getRawAxis(XboxController.Axis.kLeftY.value) + 1) / 2.0;
             actuator.setPosition(input);
         }
