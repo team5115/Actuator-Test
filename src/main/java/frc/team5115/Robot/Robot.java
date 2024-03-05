@@ -10,13 +10,18 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class Robot extends TimedRobot {
     Joystick joy;
-    PWM actuator;
+    PWM actuator8;
+    PWM actuator9;
 
     @Override
     public void robotInit() {
         joy = new Joystick(0);
-        actuator = new PWM(9);
-        actuator.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
+
+        actuator8 = new PWM(8);
+        actuator8.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
+
+        actuator9 = new PWM(9);
+        actuator9.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
 
         new JoystickButton(joy, XboxController.Button.kA.value)
         .onTrue(new InstantCommand(this :: deploy));
@@ -26,11 +31,13 @@ public class Robot extends TimedRobot {
     }
 
     private void stow() {
-        actuator.setPosition(0.661);
+        actuator8.setPosition(0.661);
+        actuator9.setPosition(0.661);
     }
 
     private void deploy(){
-        actuator.setPosition(0.100);
+        actuator8.setPosition(0.100);
+        actuator9.setPosition(0.100);
     }
 
     @Override
@@ -40,15 +47,24 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        counter = 0;
         
     }
+
+    int counter;
 
     @Override
     public void teleopPeriodic() {
         if (joy.getRawButton(XboxController.Button.kX.value)) {
             double input = (joy.getRawAxis(XboxController.Axis.kLeftY.value) + 1) / 2.0;
-            actuator.setPosition(input);
+            actuator8.setPosition(input);
+            actuator9.setPosition(input);
         }
-        System.out.println(actuator.getPosition());
+        counter ++;
+
+        if (counter % 20 == 0) {
+            System.out.println("act8: " + actuator8.getPosition());
+            System.out.println("act9: " + actuator9.getPosition());
+        }
     }
 }
