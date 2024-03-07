@@ -26,18 +26,27 @@ public class Robot extends TimedRobot {
         new JoystickButton(joy, XboxController.Button.kA.value)
         .onTrue(new InstantCommand(this :: deploy));
 
-        new JoystickButton(joy, XboxController.Button.kB.value)
+        new JoystickButton(joy, XboxController.Button.kY.value)
         .onTrue(new InstantCommand(this :: stow));
+
+        new JoystickButton(joy, XboxController.Button.kB.value)
+        .onTrue(new InstantCommand(this :: epicButton));
     }
 
     private void stow() {
-        actuator8.setPosition(0.661);
-        actuator9.setPosition(0.661);
+        actuator8.setPosition(0.85);
+        actuator9.setPosition(0.85);
     }
 
     private void deploy(){
-        actuator8.setPosition(0.100);
-        actuator9.setPosition(0.100);
+        actuator8.setPosition(0.25);
+        actuator9.setPosition(0.25);
+    }
+
+    private void epicButton()
+    {
+        actuator8.setPosition(0.33);
+        actuator9.setPosition(0.33);
     }
 
     @Override
