@@ -1,5 +1,6 @@
 package frc.team5115.Robot;
 
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -12,9 +13,11 @@ public class Robot extends TimedRobot {
     Joystick joy;
     PWM actuator8;
     PWM actuator9;
+    DigitalOutput out;
 
     @Override
     public void robotInit() {
+        out = new DigitalOutput(0);
         joy = new Joystick(0);
 
         actuator8 = new PWM(8);
@@ -30,7 +33,10 @@ public class Robot extends TimedRobot {
         .onTrue(new InstantCommand(this :: stow));
 
         new JoystickButton(joy, XboxController.Button.kB.value)
-        .onTrue(new InstantCommand(this :: epicButton));
+        .onTrue(new InstantCommand(this :: stow));
+
+        new JoystickButton(joy, XboxController.Button.kY.value)
+        .onTrue(new InstantCommand(this :: outFalse));
     }
 
     private void stow() {
@@ -47,6 +53,11 @@ public class Robot extends TimedRobot {
     {
         actuator8.setPosition(0.33);
         actuator9.setPosition(0.33);
+    }
+
+    private void outFalse()
+    {
+        out.set(false);
     }
 
     @Override
