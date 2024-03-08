@@ -1,43 +1,36 @@
 package frc.team5115.Robot;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class Robot extends TimedRobot {
+    private final int LED_COUNT = 20;
     Joystick joy;
-    PWM actuator8;
-    PWM actuator9;
+    AddressableLED addressableLED;
+    AddressableLEDBuffer buffer;
+    boolean hasNote;
+    int currentIndex;
 
     @Override
     public void robotInit() {
         joy = new Joystick(0);
+        addressableLED = new AddressableLED(7);
+        addressableLED.setLength(LED_COUNT);
+        buffer = new AddressableLEDBuffer(LED_COUNT);
+        addressableLED.setData(buffer);
+        addressableLED.start();
 
-        actuator8 = new PWM(8);
-        actuator8.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
-
-        actuator9 = new PWM(9);
-        actuator9.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
-
-        new JoystickButton(joy, XboxController.Button.kA.value)
-        .onTrue(new InstantCommand(this :: deploy));
-
-        new JoystickButton(joy, XboxController.Button.kB.value)
-        .onTrue(new InstantCommand(this :: stow));
+        new JoystickButton(joy, 1)
+        .onTrue(new InstantCommand(this :: toggleNote));
     }
 
-    private void stow() {
-        actuator8.setPosition(0.661);
-        actuator9.setPosition(0.661);
-    }
-
-    private void deploy(){
-        actuator8.setPosition(0.100);
-        actuator9.setPosition(0.100);
+    private void toggleNote() {
+        hasNote = !hasNote;
     }
 
     @Override
@@ -46,25 +39,42 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void teleopInit() {
-        counter = 0;
-        
+    public void disabledInit() {
+        for (int i = 0; i < LED_COUNT; i ++) {
+            buffer.setRGB(i, 0, 0, 0);
+        }
+        addressableLED.setData(buffer);
+        currentIndex = 0;
     }
 
-    int counter;
+    @Override
+    public void teleopInit() {
+        hasNote = false;
+    }
 
     @Override
     public void teleopPeriodic() {
-        if (joy.getRawButton(XboxController.Button.kX.value)) {
-            double input = (joy.getRawAxis(XboxController.Axis.kLeftY.value) + 1) / 2.0;
-            actuator8.setPosition(input);
-            actuator9.setPosition(input);
+        for (int i = 0; i < LED_COUNT; i ++) {
+            updateLed(i);
         }
-        counter ++;
+        addressableLED.setData(buffer);
+        currentIndex++;
+        if (currentIndex >= LED_COUNT) {
+            currentIndex = 0;
+        }
+    }
 
-        if (counter % 20 == 0) {
-            System.out.println("act8: " + actuator8.getPosition());
-            System.out.println("act9: " + actuator9.getPosition());
+    private void updateLed(int index) {
+        // if (hasNote) {
+        //     buffer.setRGB(index, 0, 150, 0);
+        // } else {
+        //     buffer.setRGB(index, 150, 0, 0);
+        // }
+        double delta = Math.abs(index - currentIndex);
+        double applied = 0;
+        if (delta < 5) {
+            applied = delta / 5;
         }
+        buffer.setRGB(index, (int) applied, 0, 0);
     }
 }
