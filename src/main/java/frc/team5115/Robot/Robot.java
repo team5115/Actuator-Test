@@ -17,7 +17,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        out = new DigitalOutput(0);
+        out = new DigitalOutput(1);
         joy = new Joystick(0);
 
         actuator8 = new PWM(8);
@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
         new JoystickButton(joy, XboxController.Button.kB.value)
         .onTrue(new InstantCommand(this :: stow));
 
-        new JoystickButton(joy, XboxController.Button.kY.value)
+        new JoystickButton(joy, XboxController.Button.kX.value)
         .onTrue(new InstantCommand(this :: outFalse));
     }
 
@@ -57,7 +57,8 @@ public class Robot extends TimedRobot {
 
     private void outFalse()
     {
-        out.set(false);
+        out.set(!out.get());
+     
     }
 
     @Override
