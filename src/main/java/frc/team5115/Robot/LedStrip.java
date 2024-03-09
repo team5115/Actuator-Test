@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LedStrip extends SubsystemBase {
-    private final int period;
+    private final int period = 2;
+    private final double tailLength = 5;
+    private final double decay = 1d / tailLength;
+    private final int minPower = 10;
+    private final int maxPower = 250;
     private final int ledCount;
-    private final int maxDelta = 4;
-    private final int bounce = 2;
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
 
@@ -19,7 +21,6 @@ public class LedStrip extends SubsystemBase {
     private int direction;
     
     public LedStrip(int port, int ledCount) {
-        period = 2;
         this.ledCount = ledCount;
         leds = new AddressableLED(port);
         leds.setLength(ledCount);
@@ -46,17 +47,19 @@ public class LedStrip extends SubsystemBase {
         }
 
         counter += direction;
-        if (counter == ledCount + bounce || counter == -1 - bounce) {
+        if (counter == ledCount || counter == -1) {
             direction = -direction;
             counter += 2 * direction;
         }
         iterateAllLeds((index) -> {
-            double percent = 0;
-            double delta = Math.abs(counter - index);
-            if (delta <= maxDelta) {
-                percent = (maxDelta - delta) / maxDelta;
+            double percent = buffer.getLED(index).red - minPower / 1d / maxPower - decay;
+            percent = Math.max(percent, 0);
+
+            if (index == counter) {
+                percent = 1.0;
             }
-            double power = (percent * 230) + 20;
+
+            final double power = (percent * (maxPower - minPower)) + minPower;
             return new Integer[] { (int)power, 0, 0 };
         });
     }
