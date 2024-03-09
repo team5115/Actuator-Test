@@ -11,12 +11,18 @@ public class LedStrip extends SubsystemBase {
     private final int ledCount;
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
+
+    private int counter;
+    private int direction;
     
     public LedStrip(int port, int ledCount) {
         this.ledCount = ledCount;
         leds = new AddressableLED(port);
         leds.setLength(ledCount);
         buffer = new AddressableLEDBuffer(ledCount);
+
+        counter = 0;
+        direction = 0;
     }
 
     public void start() {
@@ -27,8 +33,21 @@ public class LedStrip extends SubsystemBase {
         leds.stop();
     }
 
-    public void update() {
-
+    public void updateKnightRider() {
+        counter += direction;
+        if (counter == ledCount || counter == -1) {
+            direction = -direction;
+            counter += 2 * direction;
+        }
+        iterateAllLeds((index) -> {
+            double percent = 0;
+            double delta = Math.abs(counter - index);
+            final double maxDelta = 2.0;
+            if (delta <= maxDelta) {
+                percent = delta / maxDelta;
+            }
+            return new Color((int)(percent * 200), 0, 0);
+        });
     }
 
     public void setUniformColor(int red, int green, int blue) {
