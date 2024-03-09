@@ -17,7 +17,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        out = new DigitalOutput(1);
         joy = new Joystick(0);
 
         actuator8 = new PWM(8);
@@ -26,39 +25,30 @@ public class Robot extends TimedRobot {
         actuator9 = new PWM(9);
         actuator9.setBoundsMicroseconds(2000, 1500, 1500, 1500, 1000);
 
-        new JoystickButton(joy, XboxController.Button.kA.value)
+        new JoystickButton(joy, XboxController.Button.kB.value)
         .onTrue(new InstantCommand(this :: deploy));
 
         new JoystickButton(joy, XboxController.Button.kY.value)
-        .onTrue(new InstantCommand(this :: stow));
+        .onTrue(new InstantCommand(this :: epicButton));
 
-        new JoystickButton(joy, XboxController.Button.kB.value)
+        new JoystickButton(joy, XboxController.Button.kA.value)
         .onTrue(new InstantCommand(this :: stow));
-
-        new JoystickButton(joy, XboxController.Button.kX.value)
-        .onTrue(new InstantCommand(this :: outFalse));
     }
 
     private void stow() {
-        actuator8.setPosition(0.85);
-        actuator9.setPosition(0.85);
+        actuator8.setPosition(0.7);
+        actuator9.setPosition(0.7);
     }
 
     private void deploy(){
-        actuator8.setPosition(0.25);
-        actuator9.setPosition(0.25);
+        actuator8.setPosition(0.375);
+        actuator9.setPosition(0.375);
     }
 
     private void epicButton()
     {
-        actuator8.setPosition(0.33);
-        actuator9.setPosition(0.33);
-    }
-
-    private void outFalse()
-    {
-        out.set(!out.get());
-     
+        actuator8.setPosition(0.55);
+        actuator9.setPosition(0.55);
     }
 
     @Override
