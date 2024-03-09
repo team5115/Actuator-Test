@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LedStrip extends SubsystemBase {
@@ -46,19 +45,20 @@ public class LedStrip extends SubsystemBase {
             if (delta <= maxDelta) {
                 percent = delta / maxDelta;
             }
-            return new Color((int)(percent * 200), 0, 0);
+            return new Integer[] { (int)(percent * 200), 0, 0 };
         });
     }
 
     public void setUniformColor(int red, int green, int blue) {
         iterateAllLeds((index) -> {
-            return new Color(red, green, blue);
+            return new Integer[] {red, green, blue};
         });
     }
 
-    private void iterateAllLeds(Function<Integer, Color> function) {
+    private void iterateAllLeds(Function<Integer, Integer[]> function) {
         for (int i = 0; i < ledCount; i++) {
-            buffer.setLED(i, function.apply(i));
+            Integer[] color = function.apply(i);
+            buffer.setRGB(i, color[0], color[1], color[2]);
         }
         leds.setData(buffer);
     }
