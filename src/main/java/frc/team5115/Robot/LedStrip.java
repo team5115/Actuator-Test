@@ -7,7 +7,10 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LedStrip extends SubsystemBase {
+    private final int period;
     private final int ledCount;
+    private final int maxDelta = 4;
+    private final int bounce = 2;
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
 
@@ -16,6 +19,7 @@ public class LedStrip extends SubsystemBase {
     private int direction;
     
     public LedStrip(int port, int ledCount) {
+        period = 2;
         this.ledCount = ledCount;
         leds = new AddressableLED(port);
         leds.setLength(ledCount);
@@ -35,25 +39,25 @@ public class LedStrip extends SubsystemBase {
 
     public void updateKnightRider() {
         timer ++;
-        if (timer >= 2) {
+        if (timer >= period) {
             timer = 0;
         } else {
             return;
         }
 
         counter += direction;
-        if (counter == ledCount || counter == -1) {
+        if (counter == ledCount + bounce || counter == -1 - bounce) {
             direction = -direction;
             counter += 2 * direction;
         }
         iterateAllLeds((index) -> {
             double percent = 0;
             double delta = Math.abs(counter - index);
-            final double maxDelta = 3.0;
             if (delta <= maxDelta) {
                 percent = (maxDelta - delta) / maxDelta;
             }
-            return new Integer[] { (int)(percent * percent * 200), 0, 0 };
+            double power = (percent * 230) + 20;
+            return new Integer[] { (int)power, 0, 0 };
         });
     }
 
