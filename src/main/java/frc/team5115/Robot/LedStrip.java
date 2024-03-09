@@ -11,6 +11,7 @@ public class LedStrip extends SubsystemBase {
     private final AddressableLED leds;
     private final AddressableLEDBuffer buffer;
 
+    private int timer;
     private int counter;
     private int direction;
     
@@ -21,7 +22,7 @@ public class LedStrip extends SubsystemBase {
         buffer = new AddressableLEDBuffer(ledCount);
 
         counter = 0;
-        direction = 0;
+        direction = 1;
     }
 
     public void start() {
@@ -33,6 +34,13 @@ public class LedStrip extends SubsystemBase {
     }
 
     public void updateKnightRider() {
+        timer ++;
+        if (timer >= 2) {
+            timer = 0;
+        } else {
+            return;
+        }
+
         counter += direction;
         if (counter == ledCount || counter == -1) {
             direction = -direction;
@@ -41,11 +49,11 @@ public class LedStrip extends SubsystemBase {
         iterateAllLeds((index) -> {
             double percent = 0;
             double delta = Math.abs(counter - index);
-            final double maxDelta = 2.0;
+            final double maxDelta = 3.0;
             if (delta <= maxDelta) {
-                percent = delta / maxDelta;
+                percent = (maxDelta - delta) / maxDelta;
             }
-            return new Integer[] { (int)(percent * 200), 0, 0 };
+            return new Integer[] { (int)(percent * percent * 200), 0, 0 };
         });
     }
 

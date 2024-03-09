@@ -10,6 +10,7 @@ public class Robot extends TimedRobot {
     Joystick joy;
     LedStrip ledStrip;
     boolean hasNote;
+    int counter;
 
     @Override
     public void robotInit() {
@@ -17,15 +18,11 @@ public class Robot extends TimedRobot {
         ledStrip = new LedStrip(7, 20);
 
         new JoystickButton(joy, 1).onTrue(new InstantCommand(this :: toggleNote));
+        ledStrip.start();
     }
 
     private void toggleNote() {
         hasNote = !hasNote;
-        if (hasNote) {
-            ledStrip.setUniformColor(0, 150, 0);
-        } else {
-            ledStrip.setUniformColor(150, 0, 0);
-        }
     }
 
     @Override
@@ -40,10 +37,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        counter = 0;
     }
 
     @Override
     public void teleopPeriodic() {
-        ledStrip.updateKnightRider();
+        if (hasNote) {
+            ledStrip.setUniformColor(0, 150, 0);
+        } else {
+            ledStrip.updateKnightRider();
+        }
     }
 }
