@@ -10,7 +10,6 @@ public class Robot extends TimedRobot {
     Joystick joy;
     LedStrip ledStrip;
     boolean hasNote;
-    int counter;
 
     @Override
     public void robotInit() {
@@ -37,7 +36,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        counter = 0;
     }
 
     @Override
